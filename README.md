@@ -93,3 +93,56 @@ https://fileserver.lan:9090
 
 Ensure that the connection to the newly created share is working correctly.
 
+### 8. Create and Configure Sanoid
+
+Create and configure the `/etc/sanoid/sanoid.conf` file with the provided settings:
+
+#### Sanoid Configuration Script
+
+```bash
+#!/bin/bash
+
+# Ensure the sanoid directory exists
+mkdir -p /etc/sanoid
+
+# Create the sanoid.conf file with the provided content
+cat <<EOL >/etc/sanoid/sanoid.conf
+# you can also handle datasets recursively in an atomic way without the possibility to override settings for child datasets.
+[data/video]
+        use_template = production
+        recursive = zfs
+[data/media]
+        use_template = production
+        recursive = zfs
+
+#############################
+# templates below this line #
+#############################
+
+# name your templates template_templatename. you can create your own, and use them in your module definitions above.
+
+# Using a lot of frequently at 30min for Shadow Copy, since it isn't a fan of the differently named snapshots.
+[template_production]
+        frequently = 144
+        frequent_period = 30
+        hourly = 0
+        daily = 30
+        monthly = 3
+        yearly = 0
+        autosnap = yes
+        autoprune = yes
+EOL
+
+# Confirm the creation and content of the sanoid.conf file
+echo "sanoid.conf has been created with the provided settings:"
+cat /etc/sanoid/sanoid.conf
+```
+### 9. Configure Advanced File Sharing Options
+Add the following advanced options to the "file sharing" configuration:
+``` options
+map acl inherit = yes
+vfs objects = shadow_copy2 acl_xattr
+shadow:snapdir = .zfs/snapshot
+shadow:sort = desc
+shadow:format = autosnap_%Y-%m-%d_%H:%M:%S_frequently
+```
