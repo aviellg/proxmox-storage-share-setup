@@ -36,14 +36,14 @@ Copy the provided bash script and paste it into the terminal of the container to
 ## 
 apt update -y && apt upgrade -y
 
-# Create a user "admin" and ask for password
+# Create a user "aviellg" and ask for password
 read -p "Enter password for user admin: " -s password
 echo
-adduser --gecos "" admin
+adduser --gecos "" aviellg
 echo "admin:$password" | chpasswd
 
-# Add "admin" to the sudo group
-usermod -aG sudo admin
+# Add "aviellg" to the sudo group
+usermod -aG sudo aviellg
 
 # Install Cockpit
 apt update
